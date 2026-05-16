@@ -37,7 +37,7 @@ Navigating Nairobi's informal matatu network is challenging due to the lack of o
 4. You can toggle the map view to see visualizations of major Nairobi termini (like Railways or Green Park).
 
 
-## Team Members & Roles
+## Team Members
 
 - **Tevin** 
 - **Daisy** 
