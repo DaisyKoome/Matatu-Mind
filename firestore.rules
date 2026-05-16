@@ -1,0 +1,60 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() 
+        && request.auth.token.email_verified == true 
+        && (
+          request.auth.token.email == 'tevinowino65@gmail.com' || 
+          request.auth.token.email == 'samuelwanyua@gmail.com' ||
+          request.auth.token.email == 'dskoome2@gmail.com'
+        );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function isValidSession(data) {
+      return data.history is list 
+        && data.history.size() <= 1000
+        && data.updatedAt == request.time
+        && (!('lastRoute' in data) || (data.lastRoute is map && data.lastRoute.keys().hasAll(['origin', 'destination'])))
+        && (!('crowdsourcedContributions' in data) || data.crowdsourcedContributions is list);
+    }
+
+    match /sessions/{userId} {
+      allow get: if isOwner(userId) && isValidId(userId);
+      
+      allow create: if isOwner(userId) 
+        && isValidSession(incoming())
+        && incoming().keys().hasAll(['history', 'updatedAt'])
+        && incoming().keys().size() <= 5;
+
+      allow update: if isOwner(userId)
+        && isValidSession(incoming())
+        && (
+          // Action: Update History
+          (incoming().diff(resource.data).affectedKeys().hasOnly(['history', 'updatedAt', 'lastRoute', 'crowdsourcedContributions']))
+        );
+    }
+  }
+}
