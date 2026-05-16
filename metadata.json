@@ -1,0 +1,10 @@
+{
+  "name": "MatatuMind: Nairobi Route Intel",
+  "description": "An AI-powered transit agent for Nairobi's informal matatu network, providing real-time route inference, stage locations, and fare estimates.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

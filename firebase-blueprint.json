@@ -1,0 +1,39 @@
+{
+  "entities": {
+    "Session": {
+      "title": "User Session",
+      "description": "Stores the conversation history and metadata for a user's transit queries.",
+      "type": "object",
+      "properties": {
+        "history": {
+          "type": "array",
+          "description": "The full chat history between the user and MatatuMind."
+        },
+        "lastRoute": {
+          "type": "object",
+          "description": "The last origin and destination the user queried.",
+          "properties": {
+            "origin": { "type": "string" },
+            "destination": { "type": "string" }
+          }
+        },
+        "crowdsourcedContributions": {
+          "type": "array",
+          "description": "Any reports or tips the user shared during the session."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last time the session was updated."
+        }
+      },
+      "required": ["history", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "sessions/{userId}": {
+      "schema": "Session",
+      "description": "User specific session document identified by Firebase Auth UID."
+    }
+  }
+}
